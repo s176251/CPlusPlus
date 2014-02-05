@@ -1,5 +1,4 @@
-#include <stdio.h>
-#include <tchar.h>
+#include <stdio>
 #include <string>
 #include <iostream>
 
