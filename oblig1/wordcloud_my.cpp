@@ -12,6 +12,7 @@ using namespace std;
 string legalizeString(string* strp)
 {
 	string str;
+	str.reserve(strp->size()); //The new string is likely the same size.
 	int a = strp->length();
 	bool skip = false;
 
