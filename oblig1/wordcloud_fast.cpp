@@ -43,10 +43,23 @@ string legalizeString(string* strp)
 // Used to sort the word,frequency pairs by frequency.
 bool sortByFreq(const pair<string, int> &l, const pair<string, int> &r) { return l.second > r.second; }
 
+#define INIT_CAP 500
+
+struct word_freq {
+	char* word;
+	int freq;
+};
+
 
 //Entry point. Reads text from pipe and counts words.
 int main(int argc, char* argv[])
 {
+	word_freq **wc;
+	wc = (word_freq**)malloc(INIT_CAP * sizeof(word_freq*));
+	
+	free(wc);
+
+	/*
 	//Create map of ignore words.
 	std::map<std::string, int> ignore;
 	char* ptr = (char*)stopwords_c;
@@ -68,6 +81,8 @@ int main(int argc, char* argv[])
 	map<std::string, int> wordCount; // Map to store words and their frequency.
 	string word; 			 // temp-variable for pipeline input.
 
+
+	
 	//Read from pipeline
 	while(cin >> word)
 	{
@@ -77,11 +92,12 @@ int main(int argc, char* argv[])
 		//Add to map if not present in ignore-list
 		if(ignore.count(word) == 0)
 			wordCount[word]++;
-	}
+	} */
 
 	// If argument passed, print the n most frequent words.
 	if( argc > 1)
 	{
+		/*
 		int  n = atoi(argv[1]);
 
 		//Sort the map by frequency into a vector of pairs
@@ -101,7 +117,7 @@ int main(int argc, char* argv[])
 			if(i++ >= n) break;
 			printf("%20s : %d \n", itr->first.c_str(), itr->second);
 			//cout << itr->first << " : " << itr->second << endl;
-		}
+		} */
 		// Print sorted on word
 		/*for (map<string, int>::iterator it = wordCount.begin(); it != wordCount.end(); it++)
 		{
