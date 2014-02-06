@@ -20,14 +20,11 @@ std::string longlong_to_string(long long ll)
 
 int main(int argc, char* argv[])
 {
-
 	unsigned long long longstr = string_to_ulong("I love C++");  // String til long long
 	cout << longstr << endl;
 
 	std::string strlong = longlong_to_string(longstr);           // long long til String
 	cout << strlong << endl;
 
-	int pause;
-	cin >> pause;  // Kun for å pause promptet.
 	return 0;
 }

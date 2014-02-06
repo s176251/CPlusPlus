@@ -1,3 +1,4 @@
+// Brukte denne for å teste for minnelekasjer. Når jeg kjørte valgrind med cat og pipeline, testet den bare cat kommandoen ikke wordcloud_fast.
 #include <string>
 #include <iostream>
 #include <vector>
