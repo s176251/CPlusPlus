@@ -68,6 +68,14 @@ int main(int argc, char* argv[])
 	{
 		cout << *(wc[i]->word) << ":" << *(wc[i]->freq) << endl;
 	}
+
+	for( int i = 0; i < INIT_CAP; i++)
+	{
+		delete wc[i]->word;
+		delete wc[i]->freq;
+		delete wc[i];
+	}	
+	
 	
 	free(wc);
 
