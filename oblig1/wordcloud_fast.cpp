@@ -48,9 +48,6 @@ struct word_freq {
 	int* freq;
 };
 
-// Used to sort the word_freq by frequency.
-bool sortByFreq(const word_freq &l, const word_freq &r) { return *(l.freq) > *(r.freq); }
-
 int isWordInArray(word_freq** words, string word)
 {
 	for( int i = 0; i < *added; i++)
@@ -61,23 +58,6 @@ int isWordInArray(word_freq** words, string word)
 		}
 	}
 	return -1;
-}
-
-int compareFreq(const void* p1, const void* p2) 
-{
-	const word_freq* one = (const word_freq*)p1;
-	const word_freq* two = (const word_freq*)p2;
-	
-	if(one->freq > 0 ) cout << *(one->freq) << " : ";
-	
-	cout << one->freq << endl;
-	//if( *(one->freq) > *(two->freq) ) return 1;
-	//if( *(one->freq) < *(two->freq) ) return -1;
-	return 0;
-  //const int f1 = *(((const word_freq*)p1)->freq);
-  //const int f2 = *(((const word_freq*)p2)->freq);
-  //if (f1 == f2) return 0;
-  //return (f1 > f2) ? 1 : -1;
 }
 
 void inefficientSort(word_freq** words, int n) 
@@ -127,7 +107,8 @@ int main(int argc, char* argv[])
 	*current_array_size = INIT_CAP;
 	*added = 0;
 	int index = -1;
-	string inputWord; 			 // temp-variable for pipeline input.
+	string inputWord; 			
+	
 	//Read from pipeline
 	while(cin >> inputWord)
 	{
@@ -156,11 +137,6 @@ int main(int argc, char* argv[])
 			wc = (word_freq**)realloc(wc, (*current_array_size) * sizeof(word_freq*));
 		}
 	}
-	/*
-	for( int i = 0; i < *added; i++)
-	{
-		cout << *(wc[i]->word) << ":" << *(wc[i]->freq) << endl;
-	}*/	
 
 	// If argument passed, print the n most frequent words.
 	if( argc > 1)
@@ -173,8 +149,8 @@ int main(int argc, char* argv[])
 		// Print sorted on frequency
 		for(int i = 0; i < *added; i++)
 		{
-			if( i > n) break;
-			cout << *(wc[i]->word) << ":" << *(wc[i]->freq) << endl;
+			if( i >= n) break;
+			printf("%20s : %d \n", (wc[i]->word)->c_str(), *(wc[i]->freq));
 		}	
 	}
 	
