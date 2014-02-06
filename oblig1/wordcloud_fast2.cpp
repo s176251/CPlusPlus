@@ -39,7 +39,7 @@ string legalizeString(string* strp)
 	return str;
 }
 
-#define INIT_CAP 600 //MUST BE > 1
+#define INIT_CAP 2 //MUST BE > 1
 int* const added = (int*)malloc(sizeof(int*));
 int* const current_array_size = (int*)malloc(sizeof(int*));
 
@@ -108,10 +108,17 @@ int main(int argc, char* argv[])
 	*added = 0;
 	int index = -1;
 	string inputWord;
+	vector<string> sv;
+	sv.push_back("abc");
+	sv.push_back("asd");
+	sv.push_back("asdasd");
+	sv.push_back("ddddddaaa");
+	sv.push_back("wwee");
 
 	//Read from pipeline
-	while(cin >> inputWord)
+	for(int k = 1; k < 5; k++)
 	{
+		inputWord = sv.at(k);
 		//Remove illegal chars and convert to lowercase.
 		inputWord = legalizeString(&inputWord);
 
@@ -163,5 +170,6 @@ int main(int argc, char* argv[])
 	free(wc);
 	free(added);
 	free(current_array_size);
+
 	return 0;
 }
