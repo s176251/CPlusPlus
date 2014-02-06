@@ -39,47 +39,70 @@ string legalizeString(string* strp)
 	return str;
 }
 
-
-// Used to sort the word,frequency pairs by frequency.
-bool sortByFreq(const pair<string, int> &l, const pair<string, int> &r) { return l.second > r.second; }
-
-#define INIT_CAP 500
+#define INIT_CAP 100 //MUST BE > 1 
+int* const added = (int*)malloc(sizeof(int*));
+int* const current_array_size = (int*)malloc(sizeof(int*));
 
 struct word_freq {
 	string* word;
 	int* freq;
 };
 
+// Used to sort the word_freq by frequency.
+bool sortByFreq(const word_freq &l, const word_freq &r) { return *(l.freq) > *(r.freq); }
+
+int isWordInArray(word_freq** words, string word)
+{
+	for( int i = 0; i < *added; i++)
+	{
+		if((words[i]->word)->compare(word) == 0)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+int compareFreq(const void* p1, const void* p2) 
+{
+	const word_freq* one = (const word_freq*)p1;
+	const word_freq* two = (const word_freq*)p2;
+	
+	if(one->freq > 0 ) cout << *(one->freq) << " : ";
+	
+	cout << one->freq << endl;
+	//if( *(one->freq) > *(two->freq) ) return 1;
+	//if( *(one->freq) < *(two->freq) ) return -1;
+	return 0;
+  //const int f1 = *(((const word_freq*)p1)->freq);
+  //const int f2 = *(((const word_freq*)p2)->freq);
+  //if (f1 == f2) return 0;
+  //return (f1 > f2) ? 1 : -1;
+}
+
+void inefficientSort(word_freq** words, int n) 
+{
+	int a = 0;
+	int b = 0;
+	
+	for( int j = 0; j < n-1; j++)
+		for( int i = 0; i < n-1; i++)
+		{
+			a = *(words[i]->freq);
+			b = *(words[i+1]->freq);
+			
+			if(a < b)
+			{
+				word_freq* tmp = words[i];
+				words[i] = words[i+1];
+				words[i+1] = tmp;
+			}
+		}		
+}
 
 //Entry point. Reads text from pipe and counts words.
 int main(int argc, char* argv[])
 {
-	word_freq **wc;
-	wc = (word_freq**)malloc(INIT_CAP * sizeof(word_freq*));
-		
-	for( int i = 0; i < INIT_CAP; i++)
-	{
-		wc[i] = new word_freq;
-		wc[i]->word = new string("abc");
-		wc[i]->freq = new int(i);
-	}
-	
-	for( int i = 0; i < 10; i++)
-	{
-		cout << *(wc[i]->word) << ":" << *(wc[i]->freq) << endl;
-	}
-
-	for( int i = 0; i < INIT_CAP; i++)
-	{
-		delete wc[i]->word;
-		delete wc[i]->freq;
-		delete wc[i];
-	}	
-	
-	
-	free(wc);
-
-	/*
 	//Create map of ignore words.
 	std::map<std::string, int> ignore;
 	char* ptr = (char*)stopwords_c;
@@ -97,53 +120,71 @@ int main(int argc, char* argv[])
 		}
 		ptr++;
 	}
+		
+	word_freq **wc;
+	wc = (word_freq**)malloc(INIT_CAP * sizeof(word_freq*));
 
-	map<std::string, int> wordCount; // Map to store words and their frequency.
-	string word; 			 // temp-variable for pipeline input.
-
-
-	
+	*current_array_size = INIT_CAP;
+	*added = 0;
+	int index = -1;
+	string inputWord; 			 // temp-variable for pipeline input.
 	//Read from pipeline
-	while(cin >> word)
+	while(cin >> inputWord)
 	{
 		//Remove illegal chars and convert to lowercase.
-		word = legalizeString(&word);
+		inputWord = legalizeString(&inputWord);
 
-		//Add to map if not present in ignore-list
-		if(ignore.count(word) == 0)
-			wordCount[word]++;
-	} */
+		if((inputWord.length() > 0) && (ignore.count(inputWord) == 0))
+		{
+			index = isWordInArray(wc, inputWord);
+
+			if(index != -1)
+			{
+				(*(wc[index]->freq))++;
+			}
+			else
+			{
+				wc[*added] = new word_freq;
+				wc[*added]->word = new string(inputWord);
+				wc[*added]->freq = new int(1);
+				(*added)++;
+			}
+		}
+		if( *added == *current_array_size)
+		{
+			*current_array_size += ((*added)/2);
+			wc = (word_freq**)realloc(wc, (*current_array_size) * sizeof(word_freq*));
+		}
+	}
+	/*
+	for( int i = 0; i < *added; i++)
+	{
+		cout << *(wc[i]->word) << ":" << *(wc[i]->freq) << endl;
+	}*/	
 
 	// If argument passed, print the n most frequent words.
 	if( argc > 1)
 	{
-		/*
 		int  n = atoi(argv[1]);
-
-		//Sort the map by frequency into a vector of pairs
-		vector< pair<string, int> > byFreq;
-		for (map<string, int>::iterator itr  = wordCount.begin(); itr != wordCount.end(); itr++)
-		{
-			pair <string, int> tmp (itr->first, itr->second);
-			byFreq.push_back(tmp);
-		}
-		sort(byFreq.begin(), byFreq.end(), sortByFreq);
-
-
+		
+		//Sort by frequency
+		inefficientSort(wc, *added);
+		
 		// Print sorted on frequency
-		int i = 0;
-		for ( vector< pair<string, int> >::iterator itr = byFreq.begin(); itr != byFreq.end(); itr++)
+		for(int i = 0; i < *added; i++)
 		{
-			if(i++ >= n) break;
-			printf("%20s : %d \n", itr->first.c_str(), itr->second);
-			//cout << itr->first << " : " << itr->second << endl;
-		} */
-		// Print sorted on word
-		/*for (map<string, int>::iterator it = wordCount.begin(); it != wordCount.end(); it++)
-		{
-			if(i++ >= n) break;
-			cout << it->second <<" : "<< it->first << endl;
-		}*/
+			if( i > n) break;
+			cout << *(wc[i]->word) << ":" << *(wc[i]->freq) << endl;
+		}	
 	}
+	
+	for( int i = 0; i < *added; i++)
+	{
+		delete wc[i]->word;
+		delete wc[i]->freq;
+		delete wc[i];
+	}	
+	free(wc);	
+	
 	return 0;
 }
