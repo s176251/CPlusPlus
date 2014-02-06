@@ -46,8 +46,8 @@ bool sortByFreq(const pair<string, int> &l, const pair<string, int> &r) { return
 #define INIT_CAP 500
 
 struct word_freq {
-	char* word;
-	int freq;
+	string* word;
+	int* freq;
 };
 
 
@@ -56,6 +56,18 @@ int main(int argc, char* argv[])
 {
 	word_freq **wc;
 	wc = (word_freq**)malloc(INIT_CAP * sizeof(word_freq*));
+		
+	for( int i = 0; i < INIT_CAP; i++)
+	{
+		wc[i] = new word_freq;
+		wc[i]->word = new string("abc");
+		wc[i]->freq = new int(i);
+	}
+	
+	for( int i = 0; i < 10; i++)
+	{
+		cout << *(wc[i]->word) << ":" << *(wc[i]->freq) << endl;
+	}
 	
 	free(wc);
 
