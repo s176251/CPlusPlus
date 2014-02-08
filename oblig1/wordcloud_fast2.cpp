@@ -1,4 +1,3 @@
-// Brukte denne for å teste for minnelekasjer. Når jeg kjørte valgrind med cat og pipeline, testet den bare cat kommandoen ikke wordcloud_fast.
 #include <string>
 #include <iostream>
 #include <vector>
@@ -47,7 +46,7 @@ struct word_freq {
 	word_freq* prev;
 };
 
-void addWordToArray(word_freq* words, string newWord)
+void addWordToList(word_freq* words, string newWord)
 {
 	word_freq* tmp = words->next;
 	while(tmp)
@@ -120,7 +119,7 @@ int main(int argc, char* argv[])
 
 		if((inputWord.length() > 0) && (ignore.count(inputWord) == 0))
 		{
-			addWordToArray(headPointer, inputWord);
+			addWordToList(headPointer, inputWord);
 		}
 	}
 
