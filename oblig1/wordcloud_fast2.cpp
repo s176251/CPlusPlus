@@ -40,45 +40,52 @@ string legalizeString(string* strp)
 	return str;
 }
 
-#define INIT_CAP 2 //MUST BE > 1
-int* const added = (int*)malloc(sizeof(int*));
-int* const current_array_size = (int*)malloc(sizeof(int*));
-
 struct word_freq {
 	string* word;
 	int* freq;
+	word_freq* next;
+	word_freq* prev;
 };
 
-int isWordInArray(word_freq** words, string word)
+void addWordToArray(word_freq* words, string newWord)
 {
-	for( int i = 0; i < *added; i++)
+	word_freq* tmp = words->next;
+	while(tmp)
 	{
-		if((words[i]->word)->compare(word) == 0)
+		if((tmp->word)->compare(newWord) == 0)
 		{
-			return i;
+			(*(tmp->freq))++;
+			return;
 		}
+		tmp = tmp->next;
 	}
-	return -1;
+	tmp = new word_freq;
+	tmp->word = new string(newWord);
+	tmp->freq = new int(1);
+	tmp->next = words->next;
+	words->next = tmp;
+	return;
 }
 
-void inefficientSort(word_freq** words, int n)
+void inefficientDescendingSort(word_freq* headPointer)
 {
-	int a = 0;
-	int b = 0;
-
-	for( int j = 0; j < n-1; j++)
-		for( int i = 0; i < n-1; i++)
+	string* tmpWord;
+	int* tmpFreq;
+	for(word_freq* index = headPointer->next; index->next != 0; index = index->next) 
+	{
+		for (word_freq* selection = index->next; selection != 0; selection = selection->next) 
 		{
-			a = *(words[i]->freq);
-			b = *(words[i+1]->freq);
-
-			if(a < b)
-			{
-				word_freq* tmp = words[i];
-				words[i] = words[i+1];
-				words[i+1] = tmp;
+			if (*(index->freq) < *(selection->freq)) 
+			{	
+				tmpWord = index->word;
+				tmpFreq = index->freq;
+				index->word = selection->word;
+				index->freq = selection->freq;
+				selection->word = tmpWord;
+				selection->freq = tmpFreq;
 			}
 		}
+	}
 }
 
 //Entry point. Reads text from pipe and counts words.
@@ -101,76 +108,54 @@ int main(int argc, char* argv[])
 		}
 		ptr++;
 	}
-
-	word_freq **wc;
-	wc = (word_freq**)malloc(INIT_CAP * sizeof(word_freq*));
-
-	*current_array_size = INIT_CAP;
-	*added = 0;
-	int index = -1;
+	word_freq* headPointer = new word_freq;
+	headPointer->next = 0;
 	string inputWord;
-	vector<string> sv;
-	sv.push_back("abc");
-	sv.push_back("asd");
-	sv.push_back("asdasd");
-	sv.push_back("ddddddaaa");
-	sv.push_back("wwee");
 
 	//Read from pipeline
-	for(int k = 1; k < 5; k++)
+	while(cin >> inputWord)
 	{
-		inputWord = sv.at(k);
 		//Remove illegal chars and convert to lowercase.
 		inputWord = legalizeString(&inputWord);
 
 		if((inputWord.length() > 0) && (ignore.count(inputWord) == 0))
 		{
-			index = isWordInArray(wc, inputWord);
-
-			if(index != -1)
-			{
-				(*(wc[index]->freq))++;
-			}
-			else
-			{
-				wc[*added] = new word_freq;
-				wc[*added]->word = new string(inputWord);
-				wc[*added]->freq = new int(1);
-				(*added)++;
-			}
-		}
-		if( *added == *current_array_size)
-		{
-			*current_array_size += ((*added)/2);
-			wc = (word_freq**)realloc(wc, (*current_array_size) * sizeof(word_freq*));
+			addWordToArray(headPointer, inputWord);
 		}
 	}
 
 	// If argument passed, print the n most frequent words.
 	if( argc > 1)
 	{
-		int  n = atoi(argv[1]);
+		int n = atoi(argv[1]);
 
 		//Sort by frequency
-		inefficientSort(wc, *added);
-
+		inefficientDescendingSort(headPointer);
+		
 		// Print sorted on frequency
-		for(int i = 0; i < *added; i++)
+		int i = 0;		
+		word_freq* tmp = headPointer->next;
+		while(tmp)
 		{
-			if( i >= n) break;
-			printf("%20s : %d \n", (wc[i]->word)->c_str(), *(wc[i]->freq));
+			if( i++ >= n) break;
+			
+			printf("%20s : %d \n", (tmp->word)->c_str(), *(tmp->freq));
+			tmp = tmp->next;
 		}
 	}
 
-	for( int i = 0; i < *added; i++)
+	// Free memory
+	word_freq* helper = headPointer->next;
+	word_freq* tmp = 0;
+	while(helper)
 	{
-		delete wc[i]->word;
-		delete wc[i]->freq;
-		delete wc[i];
-	}
-	free(wc);
-	free(added);
-	free(current_array_size);
-
+		tmp = helper;
+		helper = tmp->next;
+		delete tmp->word;
+		delete tmp->freq;
+		delete tmp;
+	}	
+	delete headPointer;	
+	
 	return 0;
 }
