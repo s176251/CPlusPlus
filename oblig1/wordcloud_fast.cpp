@@ -48,6 +48,7 @@ struct word_freq {
 	int* freq;
 };
 
+// Returns the index of the word in array or -1 if not present.
 int isWordInArray(word_freq** words, string word)
 {
 	for( int i = 0; i < *added; i++)
@@ -60,6 +61,7 @@ int isWordInArray(word_freq** words, string word)
 	return -1;
 }
 
+// n^2 descending sort by frequency.
 void inefficientSort(word_freq** words, int n)
 {
 	int a = 0;
