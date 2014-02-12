@@ -1,3 +1,4 @@
+// Made by Martin W. Løkkeberg (s176251).
 #include <string>
 #include <iostream>
 #include <vector>
@@ -39,9 +40,9 @@ string legalizeString(string* strp)
 	return str;
 }
 
-#define INIT_CAP 600 //MUST BE > 1
-int* const added = (int*)malloc(sizeof(int*));
-int* const current_array_size = (int*)malloc(sizeof(int*));
+#define INIT_CAP 600 //MUST BE > 1                          // Determines initial amount reserved for words.
+int* const added = (int*)malloc(sizeof(int*));              // Keeps track of added words.
+int* const current_array_size = (int*)malloc(sizeof(int*)); // Keeps track of the number of indeces in the array.
 
 struct word_freq {
 	string* word;
@@ -82,88 +83,113 @@ void inefficientSort(word_freq** words, int n)
 		}
 }
 
+// Returns false if word is in ignore-list
+bool includeWord(string** arr, int n, string word)
+{
+	for( int i = 0; i < n; i++)
+	{
+		if((arr[i])->compare(word) == 0)
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
 //Entry point. Reads text from pipe and counts words.
 int main(int argc, char* argv[])
 {
-	//Create map of ignore words.
-	std::map<std::string, int> ignore;
-	char* ptr = (char*)stopwords_c;
-	string str;
-	while(*ptr)
-	{
-		if(*ptr == ',')
+	// Create list of words to ignore
+		int ignoreWords = 119; //Her har jeg juksa litt og satt denne på forhånd, men passer på å reallokere hvis den skulle endre seg.
+		string** ignore = (string**)malloc(ignoreWords * sizeof(string*));
+		char* ptr = (char*)stopwords_c;
+		string str;
+		int wordsAdded = 0;
+		while(*ptr)
 		{
-			ignore[str]++;
-			str.clear();
-		}
-		else
-		{
-			str += *ptr;
-		}
-		ptr++;
-	}
-
-	word_freq **wc;
-	wc = (word_freq**)malloc(INIT_CAP * sizeof(word_freq*));
-
-	*current_array_size = INIT_CAP;
-	*added = 0;
-	int index = -1;
-	string inputWord;
-
-	//Read from pipeline
-	while(cin >> inputWord)
-	{
-		//Remove illegal chars and convert to lowercase.
-		inputWord = legalizeString(&inputWord);
-
-		if((inputWord.length() > 0) && (ignore.count(inputWord) == 0))
-		{
-			index = isWordInArray(wc, inputWord);
-
-			if(index != -1)
+			if(wordsAdded >= ignoreWords)
 			{
-				(*(wc[index]->freq))++;
+				ignore = (string**)realloc(ignore, ++ignoreWords * sizeof(string*));
+			}
+
+			if(*ptr == ',')
+			{
+				ignore[wordsAdded++] = new string(str);
+				str.clear();
 			}
 			else
 			{
-				wc[*added] = new word_freq;
-				wc[*added]->word = new string(inputWord);
-				wc[*added]->freq = new int(1);
-				(*added)++;
+				str += *ptr;
+			}
+			ptr++;
+		}
+
+	// Create word<->frequency array.
+		word_freq** wc = (word_freq**)malloc(INIT_CAP * sizeof(word_freq*));
+		*current_array_size = INIT_CAP;
+		*added = 0;
+	
+	//Read from pipeline and add to word<->frequency array.
+		int index = -1;
+		string inputWord;
+		while(cin >> inputWord)
+		{
+			inputWord = legalizeString(&inputWord);
+
+			if((inputWord.length() > 0) && (includeWord(ignore, ignoreWords, inputWord)))
+			{
+				index = isWordInArray(wc, inputWord);
+
+				if(index != -1)
+				{
+					(*(wc[index]->freq))++;
+				}
+				else
+				{
+					wc[*added] = new word_freq;
+					wc[*added]->word = new string(inputWord);
+					wc[*added]->freq = new int(1);
+					(*added)++;
+				}
+			}
+			if( *added == *current_array_size) // Reallocate array memory if words keep pouring in.
+			{
+				*current_array_size += ((*added)/2);
+				wc = (word_freq**)realloc(wc, (*current_array_size) * sizeof(word_freq*));
 			}
 		}
-		if( *added == *current_array_size)
-		{
-			*current_array_size += ((*added)/2);
-			wc = (word_freq**)realloc(wc, (*current_array_size) * sizeof(word_freq*));
-		}
-	}
 
 	// If argument passed, print the n most frequent words.
-	if( argc > 1)
-	{
-		int  n = atoi(argv[1]);
-
-		//Sort by frequency
-		inefficientSort(wc, *added);
-
-		// Print sorted on frequency
-		for(int i = 0; i < *added; i++)
+		if( argc > 1)
 		{
-			if( i >= n) break;
-			printf("%20s : %d \n", (wc[i]->word)->c_str(), *(wc[i]->freq));
-		}
-	}
+			int  n = atoi(argv[1]);
 
-	for( int i = 0; i < *added; i++)
-	{
-		delete wc[i]->word;
-		delete wc[i]->freq;
-		delete wc[i];
-	}
-	free(wc);
-	free(added);
-	free(current_array_size);
+			//Sort by frequency
+			inefficientSort(wc, *added);
+
+			// Print sorted on frequency
+			for(int i = 0; i < *added; i++)
+			{
+				if( i >= n) break;
+				printf("%20s : %d \n", (wc[i]->word)->c_str(), *(wc[i]->freq));
+			}
+		}
+
+	// Clean house
+		for( int i = 0; i < *added; i++)
+		{
+			delete wc[i]->word;
+			delete wc[i]->freq;
+			delete wc[i];
+		}
+		free(wc);
+		free(added);
+		free(current_array_size);
+		for( int i = 0; i < ignoreWords; i++)
+		{
+			delete ignore[i];
+		}
+		free(ignore);
+		
 	return 0;
 }

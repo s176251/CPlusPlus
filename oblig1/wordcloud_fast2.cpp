@@ -87,74 +87,105 @@ void inefficientDescendingSort(word_freq* headPointer)
 	}
 }
 
+// Returns false if word is in ignore-list
+bool includeWord(word_freq* list, string word)
+{
+	for(word_freq* i = list->next; i; i = i->next)
+	{
+		if((i->word)->compare(word) == 0)
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
 //Entry point. Reads text from pipe and counts words.
 int main(int argc, char* argv[])
 {
-	//Create map of ignore words.
-	std::map<std::string, int> ignore;
-	char* ptr = (char*)stopwords_c;
-	string str;
-	while(*ptr)
-	{
-		if(*ptr == ',')
+	//Create list of ignore words.
+		word_freq* ignore = new word_freq;
+		ignore->next = 0;
+		char* ptr = (char*)stopwords_c;
+		string str;
+		word_freq* current = ignore;
+		while(*ptr)
 		{
-			ignore[str]++;
-			str.clear();
+			if(*ptr == ',')
+			{	
+				current->next = new word_freq;
+				current = current->next;
+				current->word = new string(str);
+				str.clear();
+			}
+			else
+			{
+				str += *ptr;
+			}
+			ptr++;
 		}
-		else
+		current->next = 0;
+	
+	//Create word<->frequency list
+		word_freq* headPointer = new word_freq;
+		headPointer->next = 0;
+		
+	//Read from pipeline and add to word<->frequency list
+		string inputWord;
+		while(cin >> inputWord)
 		{
-			str += *ptr;
-		}
-		ptr++;
-	}
-	word_freq* headPointer = new word_freq;
-	headPointer->next = 0;
-	string inputWord;
+			//Remove illegal chars and convert to lowercase.
+			inputWord = legalizeString(&inputWord);
 
-	//Read from pipeline
-	while(cin >> inputWord)
-	{
-		//Remove illegal chars and convert to lowercase.
-		inputWord = legalizeString(&inputWord);
-
-		if((inputWord.length() > 0) && (ignore.count(inputWord) == 0))
-		{
-			addWordToList(headPointer, inputWord);
+			if((inputWord.length() > 0) && (includeWord(ignore, inputWord)))
+			{
+				addWordToList(headPointer, inputWord);
+			}
 		}
-	}
 
 	// If argument passed, print the n most frequent words.
-	if( argc > 1)
-	{
-		int n = atoi(argv[1]);
-
-		//Sort by frequency
-		inefficientDescendingSort(headPointer);
-		
-		// Print sorted on frequency
-		int i = 0;		
-		word_freq* tmp = headPointer->next;
-		while(tmp)
+		if( argc > 1)
 		{
-			if( i++ >= n) break;
+			int n = atoi(argv[1]);
+
+			//Sort by frequency
+			inefficientDescendingSort(headPointer);
 			
-			printf("%20s : %d \n", (tmp->word)->c_str(), *(tmp->freq));
-			tmp = tmp->next;
+			// Print sorted on frequency
+			int i = 0;		
+			word_freq* tmp = headPointer->next;
+			while(tmp)
+			{
+				if( i++ >= n) break;
+				
+				printf("%20s : %d \n", (tmp->word)->c_str(), *(tmp->freq));
+				tmp = tmp->next;
+			}
 		}
-	}
 
 	// Free memory
-	word_freq* helper = headPointer->next;
-	word_freq* tmp = 0;
-	while(helper)
-	{
-		tmp = helper;
-		helper = tmp->next;
-		delete tmp->word;
-		delete tmp->freq;
-		delete tmp;
-	}	
-	delete headPointer;	
-	
+		word_freq* helper = headPointer->next;
+		word_freq* tmp = 0;
+		while(helper)
+		{
+			tmp = helper;
+			helper = tmp->next;
+			delete tmp->word;
+			delete tmp->freq;
+			delete tmp;
+		}	
+		delete headPointer;
+		
+		helper = ignore->next;
+		tmp = 0;
+		while(helper)
+		{
+			tmp = helper;
+			helper = tmp->next;
+			delete tmp->word;
+			delete tmp;
+		}	
+		delete ignore;		
+
 	return 0;
 }
