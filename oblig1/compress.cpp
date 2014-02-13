@@ -25,20 +25,6 @@
 
 using namespace std;
 
-unsigned long long string_to_ulong(std::string s)
-{
-	const char* c = s.c_str();
-	unsigned long long* a = (unsigned long long*)c;
-	return *a;
-}
-
-std::string longlong_to_string(long long ll)
-{
-	const char* c = (char*)&ll;
-	string s(c,8);
-	return s;
-}
-
 string decompress(unsigned char* ptr, int length)
 {	
 	string str;
