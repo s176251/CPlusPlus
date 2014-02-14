@@ -40,8 +40,8 @@ string legalizeString(string* strp)
 }
 
 struct word_freq {
-	string* word;
-	int* freq;
+	string word;
+	int freq;
 	word_freq* next;
 };
 
@@ -50,34 +50,34 @@ void addWordToList(word_freq* words, string newWord)
 	word_freq* tmp = words;
 	while(tmp->next)
 	{
-		if((tmp->word)->compare(newWord) == 0)
+		if((tmp->word).compare(newWord) == 0)
 		{
-			(*(tmp->freq))++;
+			(tmp->freq)++;
 			return;
 		}
 		tmp = tmp->next;
 	}
-	if((tmp->word)->compare(newWord) == 0)
+	if((tmp->word).compare(newWord) == 0)
 	{
-		(*(tmp->freq))++;
+		(tmp->freq)++;
 		return;
 	}
 	tmp->next = new word_freq;
-	(tmp->next)->word = new string(newWord);
-	(tmp->next)->freq = new int(1);
+	(tmp->next)->word = newWord;
+	(tmp->next)->freq = 1;
 	(tmp->next)->next = 0;
 	return;
 }
 
 void inefficientDescendingSort(word_freq* headPointer)
 {
-	string* tmpWord;
-	int* tmpFreq;
+	string tmpWord;
+	int tmpFreq;
 	for(word_freq* index = headPointer->next; index->next != 0; index = index->next) 
 	{
 		for (word_freq* selection = index->next; selection != 0; selection = selection->next) 
 		{
-			if (*(index->freq) < *(selection->freq)) 
+			if (index->freq < selection->freq) 
 			{	
 				tmpWord = index->word;
 				tmpFreq = index->freq;
@@ -95,7 +95,7 @@ bool includeWord(word_freq* list, string word)
 {
 	for(word_freq* i = list->next; i; i = i->next)
 	{
-		if((i->word)->compare(word) == 0)
+		if((i->word).compare(word) == 0)
 		{
 			return false;
 		}
@@ -118,7 +118,7 @@ int main(int argc, char* argv[])
 			{	
 				current->next = new word_freq;
 				current = current->next;
-				current->word = new string(str);
+				current->word = str;
 				str.clear();
 			}
 			else
@@ -131,7 +131,7 @@ int main(int argc, char* argv[])
 	
 	//Create word<->frequency list
 		word_freq* headPointer = new word_freq;
-		headPointer->word = new string("W/F-List");
+		headPointer->word = "W/F-List";
 		headPointer->next = 0;
 		
 	//Read from pipeline and add to word<->frequency list
@@ -146,6 +146,7 @@ int main(int argc, char* argv[])
 				addWordToList(headPointer, inputWord);
 			}
 		}
+
 	// If argument passed, print the n most frequent words.
 		if( argc > 1)
 		{
@@ -161,7 +162,7 @@ int main(int argc, char* argv[])
 			{
 				if( i++ >= n) break;
 				
-				printf("%20s : %d \n", (tmp->word)->c_str(), *(tmp->freq));
+				printf("%20s : %d \n", (tmp->word).c_str(), tmp->freq);
 				tmp = tmp->next;
 			}
 		}
@@ -173,10 +174,8 @@ int main(int argc, char* argv[])
 		{
 			tmp = helper;
 			helper = tmp->next;
-			delete tmp->word;
-			delete tmp->freq;
 			delete tmp;
-		}	
+		}
 		delete headPointer;
 		
 		helper = ignore->next;
@@ -185,7 +184,6 @@ int main(int argc, char* argv[])
 		{
 			tmp = helper;
 			helper = tmp->next;
-			delete tmp->word;
 			delete tmp;
 		}	
 		delete ignore;		
