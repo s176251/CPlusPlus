@@ -1,4 +1,5 @@
-// Uses C++11 functions, compile with -std=c++0x
+// 2014-02-14 - Martin W. Løkkeberg (s176251) - C++11.
+// Counts word frequency from pipeline, uses an unsorted-map of string and int.
 #include <string>
 #include <iostream>
 #include <vector>

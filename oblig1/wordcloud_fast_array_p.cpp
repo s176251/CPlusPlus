@@ -1,4 +1,5 @@
-// Made by Martin W. Løkkeberg (s176251).
+// 2014-02-14 - Martin W. Løkkeberg (s176251) - C++98.
+// Counts word frequency from pipeline, uses an array of structs with int-pointer and string-pointer.
 #include <string>
 #include <iostream>
 #include <vector>

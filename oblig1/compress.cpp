@@ -1,5 +1,5 @@
 /*
-	C++ 2014, Oblig 1, Nøtt-oppgave. Av Martin W. Løkkeberg(s176251).
+	C++ 2014, Oblig 1, Nøtt-oppgave. Av Martin W. Løkkeberg(s176251). (C++98). 
 	
 	Kommentarer:
 	Stod at man skulle ha støtte for alle tegn fom. 32 tom. 96, men det blir jo 65 tegn som vil kreve 7 bit,

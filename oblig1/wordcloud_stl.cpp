@@ -1,3 +1,5 @@
+// 2014-02-14 - Martin W. Løkkeberg (s176251) - C++98.
+// Counts word frequency from pipeline, uses a map of string and int.
 #include <string>
 #include <iostream>
 #include <vector>
