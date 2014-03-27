@@ -1,0 +1,4 @@
+
+
+all:
+	g++ -std=c++11 class_fireworks.cpp class_dot.cpp class_has_color.cpp -o firworks -L/usr/local/lib -lfltk -lm
