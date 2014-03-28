@@ -4,6 +4,8 @@
 
 rocket::rocket(int _dotcount,int dotsize, int _fuse, int x, int y) : dotcount(_dotcount), fuse(_fuse)
 {
+	done = false;
+	t = 157;
 	dots = (* new std::vector<dot*>);
 	
 	for(int i = 0; i < _dotcount; i++)
@@ -24,7 +26,12 @@ void incrementDots(dot* a)
 
 void rocket::draw()
 {	
-	if(fuse == 0) std::for_each(dots.begin(), dots.end(), &incrementDots);
+	if(done) return;
+	if(fuse == 0)
+	{
+		std::for_each(dots.begin(), dots.end(), &incrementDots);
+		if(--t == 0) done = true;
+	}
 	else fuse--;
 }
 
@@ -33,7 +40,10 @@ void rocket::operator++()
 	draw();	
 }
 
-void rocket::reset() {}
+void rocket::reset()
+{
+
+}
 
 
 rocket::~rocket(){}

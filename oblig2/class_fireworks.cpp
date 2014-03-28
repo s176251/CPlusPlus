@@ -11,15 +11,22 @@
 #include <iostream>
 #include <algorithm>
 
-const int dotCount = 20;
-const int dotSize = 7;
-const int rocketCount = 20;
+const int dotCount = 100;
+const int dotSize = 5;
+const int rocketCount = 60;
 
 fireworks::fireworks(const char *l,int w, int h, int _rocketcount) : animation_canvas(l, w, h), rocketcount(_rocketcount)
 {	
+	int j = 10;
+	int nw = (4.0/5.0)*w;
+	int nh = (4.0/5.0)*h;
+	int dw = (1.0/10.0)*w;
+	int dh = (1.0/10.0)*h;
+	
 	for(int i = 0; i < _rocketcount; i++)
 	{
-		rocket* a = new rocket( dotCount, dotSize, (rand()%200)*i, rand()%w, rand()%h);
+		rocket* a = new rocket( dotCount, dotSize, j, (rand()%nw)+dw, (rand()%nh)+dh);
+		j += (rand()%50)+40;
 		add(a);
 	}
 }
@@ -34,19 +41,15 @@ int main()
 	int w = Fl::w();
 	int h = Fl::h();
 	srand(time(NULL));
-	
-	//std::cout << "main(),1" << std::endl;
+
 	Fl_Window *window=new Fl_Window(w, h, "Dots!");
 	//window->fullscreen();
 	
-	//std::cout << "main(),2" << std::endl;
 	animation_canvas* b = new fireworks("hei", w, h, rocketCount);
 	
-	//std::cout << "main(),3" << std::endl;
 	window->end();
 	window->show();
 	
-	//std::cout << "main(),4" << std::endl;
 	Fl::add_timeout(0.2, animation_canvas::timer, b);
 	
 	return Fl::run();

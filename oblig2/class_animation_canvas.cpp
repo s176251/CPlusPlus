@@ -3,7 +3,7 @@
 #include <FL/fl_draw.H>
 #include <algorithm>
 
-int animation_canvas::fps = 24;
+int animation_canvas::fps = 48;
 int timesRun = 0;
 
 animation_canvas::animation_canvas(const char *l,int w, int h) : Fl_Box(0,0, w, h, l)
