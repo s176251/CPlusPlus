@@ -10,7 +10,7 @@
 class rocket : public animated{
   int dotcount;
   int fuse;
-  std::vector<dot*> dots;
+  std::vector<dot> dots;
 
   void draw () override;
   void clear() override;

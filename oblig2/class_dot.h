@@ -6,7 +6,7 @@
 #include "class_has_color.h"
 #include "class_animated.h"
 
-class dot : public animated, is_vector, has_color{
+class dot : animated, is_vector, has_color{
   double r;
   double x;
   double y;
