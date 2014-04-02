@@ -13,7 +13,7 @@
 #include <iostream>
 #include <algorithm>
 
-
+//Returns a random double
 double rngDouble(double dMin, double dMax)
 {
     double d = (double)rand() / RAND_MAX;
@@ -26,6 +26,9 @@ void cloud::draw()
 	{
 		clouds[i]->move( speed, 0, 0);
 	}
+	
+	// Causes the cloud to switch direction after a predetermined
+	// randomly generated value.
 	if(itr%itr_before_turn == 0)
 	{
 		speed = speed*-1;

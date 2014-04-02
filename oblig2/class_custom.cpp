@@ -13,21 +13,18 @@
 #include <iostream>
 #include <algorithm>
 
-const int dotCount = 5;
-const int dotSize = 1;
 const int cloudcount = 10;
 
 
 //*********************************************************************************************************************************************
 //*********************************************************************************************************************************************
 
-
+// Class that creates a scenery with blue sky, a green hill, floating clouds and a moving sun.
 class hello_world: public animation_canvas  
 {
-
- public:
-  hello_world(const char* title,int w, int h, int _cloudcount);
-  ~hello_world() override;
+	public:
+		hello_world(const char* title,int w, int h, int _cloudcount);
+		~hello_world() override;
 };
 
 hello_world::hello_world(const char *l,int w, int h, int _cloudcount) : animation_canvas(l, w, h)
@@ -48,10 +45,7 @@ hello_world::hello_world(const char *l,int w, int h, int _cloudcount) : animatio
 	}
 }
 
-hello_world::~hello_world()
-{
-	;
-}
+hello_world::~hello_world(){}
 
 //*********************************************************************************************************************************************
 //*********************************************************************************************************************************************
