@@ -54,6 +54,8 @@ int main()
 	srand(time(NULL));
 
 	Fl_Window *window = new Fl_Window(w, h, "Fireworks!");
+	window->fullscreen();
+	window->color(FL_BLACK);
 	
 	animation_canvas* b = new fireworks("fws", w, h, rocketCount);
 		

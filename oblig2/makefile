@@ -27,8 +27,21 @@ clean:
 	\rm *.o fireworks custom
 
 
-class_custom.o: class_custom.cpp class_rocket.h class_dot.h class_animation_canvas.h 
+class_custom.o: class_custom.cpp class_cloud.h class_sun.h class_circle.h class_square.h class_animation_canvas.h 
 	$(CC) $(CFLAGS) class_custom.cpp
 
-custom: class_custom.o class_dot.o class_has_color.o class_animation_canvas.o class_rocket.o
-	$(CC) class_custom.o class_dot.o class_has_color.o class_animation_canvas.o class_rocket.o $(LFLAGS) -o custom
+custom: class_custom.o class_circle.o class_has_color.o class_animation_canvas.o class_square.o class_sun.o class_cloud.o 
+	$(CC) class_custom.o class_cloud.o class_circle.o class_square.o class_has_color.o class_animation_canvas.o class_sun.o $(LFLAGS) -o custom
+	
+	
+class_cloud.o: class_cloud.cpp class_cloud.h class_circle.h
+	$(CC) $(CFLAGS) class_cloud.cpp
+	
+class_sun.o: class_sun.cpp class_sun.h class_circle.h
+	$(CC) $(CFLAGS) $(LFLAGS) class_sun.cpp
+	
+class_circle.o: class_circle.cpp class_circle.h
+	$(CC) $(CFLAGS) $(LFLAGS) class_circle.cpp
+	
+class_square.o: class_square.cpp class_square.h
+	$(CC) $(CFLAGS) class_square.cpp
